@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Virtual D-Coin Portal</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{
+  --primary:#6c63ff;
+  --secondary:#8a4bff;
+  --accent:#ffb400;
+  --bg:#f5f6ff;
+  --text:#1b1b28;
+  --light:#fff;
+}
+
+/* ---------- Base ---------- */
+body{
+  margin:0;
+  font-family:"Poppins","Segoe UI",sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+/* ---------- Header & Menu ---------- */
+.header{
+  position:sticky;top:0;z-index:100;
+  background:linear-gradient(90deg,var(--primary),var(--secondary));
+  color:#fff;display:flex;justify-content:space-between;align-items:center;
+  padding:16px 50px;
+  box-shadow:0 4px 16px rgba(0,0,0,.15);
+}
+.header h1{
+  margin:0;font-size:1.5rem;font-weight:600;
+  display:flex;align-items:center;gap:10px;letter-spacing:.5px;
+}
+nav{
+  display:flex;align-items:center;gap:28px;
+}
+nav a{
+  position:relative;
+  color:#fff;text-decoration:none;
+  font-weight:500;font-size:1rem;
+  padding:8px 14px;border-radius:10px;
+  transition:.3s;perspective:600px;
+}
+nav a::before{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--accent),#fff);
+  transform:rotateX(90deg);transform-origin:bottom;
+  border-radius:10px;transition:.3s;
+  z-index:-1;
+}
+nav a:hover::before{transform:rotateX(0deg);}
+nav a:hover{color:#222;}
+
+/* ---------- Hero & Sections ---------- */
+/* ---------- Hero & Sections ---------- */
+.section, .hero{
+  display:none; /* hide all initially */
+  max-width:1000px;
+  margin:80px auto 60px;
+  background: linear-gradient(135deg, #01e4ba, #cf4bff); /* modern gradient */
+  border-radius:30px;
+  padding:100px 50px;
+  text-align:center;
+  color:#fff;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 20px 50px rgba(108,99,255,0.2);
+  animation:fade .5s ease;
+}
+
+.hero.active, .section.active{
+  display:block; /* show active section */
+}
+
+.hero h2{
+  font-size:3rem;
+  margin-bottom:20px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  color:#fff;
+  text-shadow:0 4px 20px rgba(0,0,0,0.2);
+}
+
+.hero p{
+  font-size:1.2rem;
+  max-width:700px;
+  margin:0 auto 30px;
+  line-height:1.7;
+  color:#f0f0ff;
+}
+
+.hero button{
+  font-size:1.2rem;
+  font-weight:700;
+  padding:18px 40px;
+  border-radius:50px;
+  border:none;
+  background:linear-gradient(90deg, #ffb400, #ff5f6d);
+  color:#fff;
+  cursor:pointer;
+  box-shadow:0 8px 20px rgba(255,95,109,0.4);
+  transition: all 0.3s ease;
+}
+
+.hero button:hover{
+  transform: scale(1.05);
+  box-shadow:0 12px 30px rgba(255,95,109,0.6);
+}
+
+.section h2{
+  margin-top:0;
+  color:#fff; /* optional: make section headings white to match theme */
+  font-size:2rem;
+  border-bottom:3px solid rgba(255,255,255,0.3);
+  padding-bottom:8px;
+  margin-bottom:20px;
+}
+
+.section p{
+  font-size:1.1rem;
+  color:#f0f0ff;
+  line-height:1.6;
+  max-width:700px;
+  margin:0 auto;
+}
+
+@keyframes fade{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+/* ---------- Forms ---------- */
+.form-group{margin-bottom:18px;}
+.form-group label{display:block;font-weight:600;margin-bottom:6px;}
+.form-group input{
+  width:100%;padding:12px;border:1px solid #ccc;border-radius:10px;
+  transition:.3s;font-size:.95rem;
+}
+.form-group input:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px rgba(108,99,255,0.2);
+}
+button.form{
+  background:linear-gradient(90deg,var(--primary),var(--secondary));
+  border:none;color:#fff;padding:12px 24px;border-radius:10px;
+  cursor:pointer;font-weight:600;font-size:1rem;
+}
+button.form:hover{background:linear-gradient(90deg,var(--secondary),var(--primary));}
+
+/* ---------- Messages ---------- */
+.message{margin-top:12px;padding:12px;border-radius:10px;font-size:.9rem;}
+.success{background:#d1e7dd;color:#0f5132;}
+.error{background:#f8d7da;color:#842029;}
+
+/* ---------- Modal ---------- */
+.modal{
+  display:none;position:fixed;inset:0;z-index:999;
+  background:rgba(0,0,0,0.6);justify-content:center;align-items:center;
+  perspective:1000px;
+}
+.modal-content{
+  background:linear-gradient(135deg,rgba(108,99,255,0.95),rgba(255,180,0,0.9));
+  padding:40px;border-radius:20px;width:90%;max-width:420px;
+  box-shadow:0 20px 50px rgba(0,0,0,0.4);
+  transform:rotateX(10deg) scale(0.9);
+  animation:pop .5s ease forwards;color:#fff;backdrop-filter:blur(10px);
+}
+@keyframes pop{to{transform:rotateX(0deg) scale(1);opacity:1;}}
+.modal-content input{
+  background:rgba(255,255,255,0.15);border:none;color:#fff;
+  width:100%;padding:12px;border-radius:10px;margin-bottom:12px;
+}
+.modal-content input::placeholder{color:#eee;}
+.modal-content button{
+  width:100%;background:#fff;color:var(--primary);font-weight:700;
+  padding:12px;border-radius:10px;border:none;cursor:pointer;transition:.3s;
+}
+.modal-content button:hover{background:var(--accent);color:#fff;}
+.close{
+  float:right;cursor:pointer;font-size:1.4rem;color:#fff;transition:.3s;
+}
+.close:hover{transform:rotate(90deg);color:#000;}
+
+/* ---------- Footer ---------- */
+footer{
+  text-align:center;padding:40px 10px;
+  color:#777;font-size:.85rem;border-top:1px solid #ddd;background:#fff;
+}
+footer b{color:var(--secondary);}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <h1><i class="fa-solid fa-coins"></i> Virtual D-Coin</h1>
+  <nav>
+    <a href="#" onclick="showSection('home')">Home</a>
+    <a href="#" onclick="showSection('about')">About</a>
+    <a href="#" onclick="showSection('contact')">Contact</a>
+    <a href="#" onclick="showSection('register')">Register</a>
+    <a href="#" onclick="openLoginModal('user')"><i class="fa-regular fa-circle-user"></i> User Login</a>
+    <a href="#" onclick="openLoginModal('admin')"><i class="fa-solid fa-user-gear"></i> Admin Login</a>
+  </nav>
+</header>
+
+<!-- ===== Hero Section ===== -->
+<section id="home" class="hero active">
+  <div class="hero-content">
+    <h2>Welcome to <b>Virtual D-Coin</b></h2>
+    <p>Powerful digital coin prototype — manage users, balances, and secure transactions right inside your browser. Experience modern blockchain-style simulation with stunning visuals and no server required.</p>
+    <button onclick="showSection('register')"><i class="fa-solid fa-user-plus"></i> Get Started</button>
+  </div>
+</section>
+
+<div class="container">
+  <section id="about" class="section">
+    <h2>ℹ️ About Virtual D-Coin</h2>
+    <p>Virtual D-Coin is a front-end powered demo that lets you simulate user wallets, admin minting, and token flow. It’s designed to look and feel like a professional Web3 dashboard but runs 100% locally.</p>
+  </section>
+
+  <section id="register" class="section">
+    <h2>🧾 Create Your Profile</h2>
+    <form id="register-form">
+      <div class="form-group"><label>Username</label><input type="text" id="reg-name" required></div>
+      <div class="form-group"><label>Email</label><input type="email" id="reg-email" required></div>
+      <div class="form-group"><label>Password</label><input type="password" id="reg-pass" required></div>
+      <button type="submit" class="form"><i class="fa-solid fa-user-plus"></i> Register</button>
+      <div id="register-message" class="message"></div>
+    </form>
+  </section>
+
+  <section id="contact" class="section">
+    <h2>📞 Contact</h2>
+    <p>Email: <b>support@virtualdcoin.com</b></p>
+    <p>Follow us on social media and explore interactive demos on local blockchain simulations.</p>
+  </section>
+</div>
+
+<footer>© 2025 <b>Virtual D-Coin Systems</b> | Local Demo Portal</footer>
+
+<!-- ===== LOGIN MODAL ===== -->
+<div id="loginModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeLoginModal()">&times;</span>
+    <h2 id="login-title"><i class="fa-solid fa-lock"></i> Login</h2>
+    <form id="login-form">
+      <input type="email" id="login-email" placeholder="Email" required>
+      <input type="password" id="login-pass" placeholder="Password" required>
+      <button type="submit"><i class="fa-solid fa-right-to-bracket"></i> Login</button>
+      <div id="login-message" class="message"></div>
+    </form>
+  </div>
+</div>
+
+<script type="module">
+  /* === IMPORT FIREBASE === */
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { 
+    getFirestore, collection, addDoc, getDocs, query, where, doc, getDoc, onSnapshot 
+  } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+  /* === CONFIG === */
+  const firebaseConfig = {
+    apiKey: "AIzaSyCATh_N8JV6kluHlH8edXcGgyda-Qec7NQ",
+    authDomain: "d-coin-4759b.firebaseapp.com",
+    projectId: "d-coin-4759b",
+    storageBucket: "d-coin-4759b.firebasestorage.app",
+    messagingSenderId: "640181564315",
+    appId: "1:640181564315:web:e82d7248506bab91b6a73e",
+    measurementId: "G-WYCCYF8J6G"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+
+  /* === GLOBAL VARS === */
+  let currentRole = 'user';
+  const ADMIN = { email: 'admin@dvirtual.com', password: 'admin123' };
+
+  /* === PAGE CONTROL === */
+  window.showSection = function(id) {
+    document.querySelectorAll('.section, .hero').forEach(s => s.classList.remove('active'));
+    const el = document.getElementById(id);
+    if (el) el.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  };
+
+  /* === LOGIN MODAL === */
+  window.openLoginModal = function (role) {
+    currentRole = role;
+    const title = (role === 'admin') ? 'Admin Login' : 'User Login';
+    document.getElementById('login-title').textContent = title;
+    const modal = document.getElementById('loginModal');
+    if (modal) {
+      modal.style.display = 'flex';
+      setTimeout(() => document.getElementById('login-email').focus(), 120);
+    }
+  };
+
+  window.closeLoginModal = function () {
+    const modal = document.getElementById('loginModal');
+    if (modal) modal.style.display = 'none';
+  };
+
+  /* === REGISTRATION === */
+  document.getElementById('register-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('reg-name').value.trim();
+    const email = document.getElementById('reg-email').value.trim().toLowerCase();
+    const pass = document.getElementById('reg-pass').value.trim();
+    const msg = document.getElementById('register-message');
+
+    try {
+      // Create user in Firebase Auth
+      const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+      const user = userCredential.user;
+
+      // Create Firestore user record
+      await addDoc(collection(db, "users"), {
+        uid: user.uid,
+        name,
+        email,
+        balance: 0,
+        transactions: []
+      });
+
+      msg.className = 'message success';
+      msg.textContent = '✅ Registration successful!';
+      e.target.reset();
+    } catch (err) {
+      msg.className = 'message error';
+      msg.textContent = '❌ ' + err.message;
+    }
+  });
+
+  /* === LOGIN === */
+  document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value.trim().toLowerCase();
+    const pass = document.getElementById('login-pass').value.trim();
+    const msg = document.getElementById('login-message');
+
+    try {
+      if (currentRole === 'admin') {
+        // Static admin login
+        if (email === ADMIN.email && pass === ADMIN.password) {
+          msg.className = 'message success';
+          msg.textContent = '✅ Admin logged in!';
+          localStorage.setItem('loggedIn', JSON.stringify({ role: 'admin', email }));
+          setTimeout(() => window.location.href = 'admin_dashboard.html', 1000);
+          return;
+        } else {
+          throw new Error('Invalid admin credentials');
+        }
+      }
+
+      // Firebase user login
+      const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+      const user = userCredential.user;
+
+      // Fetch Firestore user data
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, where("uid", "==", user.uid));
+      const snapshot = await getDocs(q);
+      const userDoc = snapshot.docs[0];
+
+      if (!userDoc) throw new Error("User data missing in Firestore");
+
+      msg.className = 'message success';
+      msg.textContent = '✅ Login successful!';
+      localStorage.setItem('loggedIn', JSON.stringify({ role: 'user', uid: user.uid, email }));
+      setTimeout(() => window.location.href = 'user_dashboard.html', 1000);
+    } catch (err) {
+      msg.className = 'message error';
+      msg.textContent = '❌ ' + err.message;
+    }
+  });
+
+  /* === REAL-TIME USER STATS (optional enhancement) === */
+  const statsEl = document.createElement('div');
+  statsEl.style.textAlign = 'center';
+  statsEl.style.marginTop = '40px';
+  statsEl.innerHTML = `
+    <h3 style="color:#6c63ff;">🌐 Live Network Stats</h3>
+    <p><b>Total Users:</b> <span id="live-users">0</span></p>
+    <p><b>Total DVC Supply:</b> <span id="live-supply">0</span> DVC</p>
+  `;
+  document.body.appendChild(statsEl);
+
+  // Real-time listeners for stats
+  onSnapshot(collection(db, "users"), (snapshot) => {
+    const users = snapshot.docs.map(doc => doc.data());
+    const totalUsers = users.length;
+    const totalSupply = users.reduce((a, b) => a + (b.balance || 0), 0);
+    document.getElementById('live-users').textContent = totalUsers;
+    document.getElementById('live-supply').textContent = totalSupply.toFixed(2);
+  });
+
+  /* === MODAL CLOSE OUTSIDE CLICK === */
+  window.addEventListener('click', function (e) {
+    const modal = document.getElementById('loginModal');
+    if (modal && e.target === modal) closeLoginModal();
+  });
+</script>
+</body>
+</html>

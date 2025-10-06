@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Dashboard - D Virtual</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root {
+  --primary: #6c63ff;
+  --secondary: #4e4cb8;
+  --accent: #ffb400;
+  --bg: #f4f4f9;
+  --card-bg: #fff;
+  --text: #333;
+  --light-text: #f0f0ff;
+}
+
+/* ---------- Base ---------- */
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ---------- Header ---------- */
+.header {
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  color: #fff;
+  padding: 15px 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+.header h1 {
+  margin: 0;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.header button {
+  background: #fff;
+  color: var(--secondary);
+  border: none;
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.header button:hover {
+  background: var(--accent);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+/* ---------- Container ---------- */
+.container {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+}
+@media(max-width:900px){
+  .container { grid-template-columns: 1fr; }
+}
+
+/* ---------- Card ---------- */
+.card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 25px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+}
+.card h2 {
+  margin-top: 0;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ---------- Balance Box ---------- */
+.balance-box {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--secondary);
+  padding: 20px 0;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  border-radius: 12px;
+  color: #fff;
+  box-shadow: 0 8px 25px rgba(108,99,255,0.3);
+}
+
+/* ---------- Forms ---------- */
+.form-group {
+  margin-bottom: 15px;
+}
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  transition: all 0.3s;
+}
+.form-group input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(108,99,255,0.15);
+}
+
+button.action {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s;
+}
+button.action:hover {
+  background: var(--secondary);
+  transform: scale(1.05);
+}
+
+/* ---------- Transactions Table ---------- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  margin-top: 15px;
+}
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+th {
+  background: var(--bg);
+  color: var(--secondary);
+  font-weight: 600;
+}
+tr:hover {
+  background: rgba(108,99,255,0.05);
+}
+
+/* ---------- Message ---------- */
+.message {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+.success { background: #d1e7dd; color: #0f5132; }
+.error { background: #f8d7da; color: #842029; }
+
+/* ---------- Footer ---------- */
+footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 0.85rem;
+  color: #777;
+  border-top: 1px solid #ddd;
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <h1><i class="fa-solid fa-user-circle"></i> User Dashboard</h1>
+  <button onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+</header>
+
+<div class="container">
+
+  <div class="card" id="user-info">
+    <h2>👤 Profile Info</h2>
+    <p><b>Name:</b> <span id="user-name"></span></p>
+    <p><b>Email:</b> <span id="user-email"></span></p>
+  </div>
+
+  <div class="card">
+    <h2>💰 Balance</h2>
+    <div class="balance-box" id="user-balance">0 DVC</div>
+  </div>
+  
+  <div class="card">
+    <h2>💰 Request Tokens</h2>
+    <form id="request-form">
+      <div class="form-group">
+        <label>Amount</label>
+        <input type="number" id="request-amount" placeholder="Enter amount" min="1" required>
+      </div>
+      <button type="submit" class="action"><i class="fa-solid fa-paper-plane"></i> Send Request</button>
+      <div id="req-message" class="message"></div>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>🔁 Send Tokens</h2>
+    <form id="send-form">
+      <div class="form-group"><label>Recipient Email</label><input type="email" id="recipient-email" required></div>
+      <div class="form-group"><label>Amount</label><input type="number" id="send-amount" min="1" required></div>
+      <button class="action" type="submit"><i class="fa-solid fa-paper-plane"></i> Send</button>
+      <div id="send-message" class="message"></div>
+    </form>
+  </div>
+
+  <div class="card" style="grid-column: span 2;">
+    <h2>📜 Transaction History</h2>
+    <table id="tx-table">
+      <thead><tr><th>Date</th><th>Type</th><th>Party</th><th>Amount</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+</div>
+
+<footer>
+  © 2025 D Virtual Systems | User Dashboard Demo
+</footer>
+
+<script type="module">
+  /* === FIREBASE IMPORTS === */
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { 
+    getFirestore, doc, updateDoc, collection, addDoc, query, where, onSnapshot, getDocs 
+  } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+  import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+  /* === FIREBASE CONFIG === */
+  const firebaseConfig = {
+    apiKey: "AIzaSyCATh_N8JV6kluHlH8edXcGgyda-Qec7NQ",
+    authDomain: "d-coin-4759b.firebaseapp.com",
+    projectId: "d-coin-4759b",
+    storageBucket: "d-coin-4759b.firebasestorage.app",
+    messagingSenderId: "640181564315",
+    appId: "1:640181564315:web:e82d7248506bab91b6a73e",
+    measurementId: "G-WYCCYF8J6G"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+
+  /* === CHECK LOGIN === */
+  const userData = JSON.parse(localStorage.getItem('loggedIn'));
+  if (!userData || userData.role !== 'user') {
+    window.location.href = 'index.html';
+  }
+
+  /* === REAL-TIME USER DASHBOARD === */
+  function renderUser(user) {
+    document.getElementById('user-name').textContent = user.name;
+    document.getElementById('user-email').textContent = user.email;
+    document.getElementById('user-balance').textContent = `${(user.balance || 0).toFixed(2)} DVC`;
+
+    const tbody = document.querySelector('#tx-table tbody');
+    tbody.innerHTML = '';
+    if (user.transactions && user.transactions.length > 0) {
+      user.transactions.slice().reverse().forEach(tx => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${tx.date}</td><td>${tx.type}</td><td>${tx.party}</td><td>${tx.amount}</td>`;
+        tbody.appendChild(tr);
+      });
+    } else {
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#888;">No transactions yet</td></tr>`;
+    }
+  }
+
+  // Real-time listener for logged-in user data
+  const userRef = query(collection(db, "users"), where("uid", "==", userData.uid));
+  onSnapshot(userRef, (snap) => {
+    if (snap.empty) return logout();
+    const docData = snap.docs[0];
+    const user = { id: docData.id, ...docData.data() };
+    renderUser(user);
+  });
+
+  /* === REQUEST TOKENS === */
+  document.getElementById('request-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const amount = parseFloat(document.getElementById('request-amount').value);
+    const msg = document.getElementById('req-message');
+    if (isNaN(amount) || amount <= 0) {
+      msg.className = 'message error';
+      msg.textContent = '❌ Please enter a valid amount.';
+      return;
+    }
+
+    try {
+      const ref = query(collection(db, "users"), where("uid", "==", userData.uid));
+      const snap = await getDocs(ref);
+      if (snap.empty) throw new Error("User not found.");
+      const userDoc = snap.docs[0];
+
+      await addDoc(collection(db, "requests"), {
+        userId: userDoc.id,
+        name: userDoc.data().name,
+        email: userDoc.data().email,
+        amount,
+        status: "pending",
+        date: new Date().toISOString().split("T")[0]
+      });
+
+      msg.className = 'message success';
+      msg.textContent = '✅ Request sent to admin!';
+      e.target.reset();
+    } catch (err) {
+      msg.className = 'message error';
+      msg.textContent = '❌ ' + err.message;
+    }
+  });
+
+  /* === SEND TOKENS === */
+  document.getElementById('send-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const recipientEmail = document.getElementById('recipient-email').value.trim().toLowerCase();
+    const amount = parseFloat(document.getElementById('send-amount').value);
+    const msg = document.getElementById('send-message');
+
+    try {
+      if (isNaN(amount) || amount <= 0) throw new Error("Invalid amount.");
+
+      // Fetch sender
+      const senderQuery = query(collection(db, "users"), where("uid", "==", userData.uid));
+      const senderSnap = await getDocs(senderQuery);
+      if (senderSnap.empty) throw new Error("Sender not found.");
+      const senderDoc = senderSnap.docs[0];
+      const sender = { id: senderDoc.id, ...senderDoc.data() };
+
+      // Fetch recipient
+      const recQuery = query(collection(db, "users"), where("email", "==", recipientEmail));
+      const recSnap = await getDocs(recQuery);
+      if (recSnap.empty) throw new Error("Recipient not found.");
+      const recDoc = recSnap.docs[0];
+      const recipient = { id: recDoc.id, ...recDoc.data() };
+
+      if (sender.balance < amount) throw new Error("Insufficient balance.");
+
+      const today = new Date().toISOString().split('T')[0];
+      const senderTx = sender.transactions || [];
+      const recipientTx = recipient.transactions || [];
+      senderTx.push({ type: 'Sent', party: recipient.email, amount: `-${amount}`, date: today });
+      recipientTx.push({ type: 'Received', party: sender.email, amount: `+${amount}`, date: today });
+
+      await updateDoc(doc(db, "users", sender.id), {
+        balance: sender.balance - amount,
+        transactions: senderTx
+      });
+      await updateDoc(doc(db, "users", recipient.id), {
+        balance: (recipient.balance || 0) + amount,
+        transactions: recipientTx
+      });
+
+      msg.className = 'message success';
+      msg.textContent = '✅ Transaction complete!';
+      e.target.reset();
+    } catch (err) {
+      msg.className = 'message error';
+      msg.textContent = '❌ ' + err.message;
+    }
+  });
+
+  /* === LOGOUT === */
+  window.logout = async function () {
+    try { await signOut(auth); } catch {}
+    localStorage.removeItem('loggedIn');
+    window.location.href = 'index.html';
+  };
+</script>
+</body>
+</html>

@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Admin Dashboard - D Virtual</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root {
+  --primary: #ff8a00;
+  --secondary: #e52e71;
+  --light-bg: #f4f4f9;
+  --card-bg: #ffffff;
+  --hover-bg: #fffaf4;
+  --table-header: #fff3e0;
+  --text-color: #333;
+  --shadow: rgba(0,0,0,0.1);
+}
+
+body {
+  margin:0;
+  font-family:"Segoe UI",sans-serif;
+  background:var(--light-bg);
+  color:var(--text-color);
+}
+
+/* Header */
+.header {
+  background: linear-gradient(90deg,var(--primary),var(--secondary));
+  color:#fff;
+  padding:15px 25px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:0 6px 20px var(--shadow);
+  border-radius:0 0 12px 12px;
+}
+.header h1 { 
+  margin:0; 
+  font-size:1.5rem; 
+  display:flex; 
+  gap:10px; 
+  align-items:center;
+}
+.header button {
+  background:#fff;
+  color:var(--secondary);
+  border:none;
+  padding:8px 18px;
+  border-radius:10px;
+  font-weight:600;
+  cursor:pointer;
+  transition:.3s;
+}
+.header button:hover{ background:#ffe6cc; }
+
+/* Container */
+.container { max-width:1200px; margin:40px auto; padding:0 20px; display:grid; gap:25px; }
+
+.carda {
+    display: flex;
+    justify-content: space-between;
+  background: linear-gradient(135deg, #00cd5f, #ffffff);
+  border-radius:16px;
+  box-shadow:0 8px 25px var(--shadow);
+  padding:25px;
+  transition:.3s;
+  color: #ffffff;
+}
+
+/* Card */
+.card {
+  background:var(--card-bg);
+  border-radius:16px;
+  box-shadow:0 8px 25px var(--shadow);
+  padding:25px;
+  transition:.3s;
+}
+.card:hover { transform: translateY(-3px); box-shadow:0 12px 35px var(--shadow); }
+.card h2 { margin-top:0; color:var(--secondary); font-size:1.4rem; }
+
+/* Admin Wallet Styling */
+.admin-wallet { 
+  background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+  color: #fff; 
+  text-align: center; 
+}
+.admin-wallet h2 { color: #fff; font-size: 1.4rem; margin-bottom: 20px; }
+.wallet-amount {
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+/* Table */
+table {
+  width:100%;
+  border-collapse:collapse;
+  font-size:0.95rem;
+}
+th,td {
+  padding:10px;
+  border-bottom:1px solid #eeeeee;
+  text-align:left;
+}
+th { background:#86defd; color:var(--text-color); }
+tr:hover { background: var(--hover-bg); }
+
+/* Buttons */
+.small-btn {
+  padding:5px 10px;
+  border-radius:6px;
+  cursor:pointer;
+  border:none;
+  font-size:0.85rem;
+  margin-right:4px;
+  transition:.3s;
+}
+.del-btn { background:#ff4b5c; color:white; }
+.edit-btn { background:#4e4cb8; color:white; }
+.green-btn { background:#4CAF50; color:white; }
+.orange-btn { background:#ff9800; color:white; }
+.small-btn:hover { opacity:.85; transform:scale(1.05); }
+
+/* Modal */
+.modal {
+  display:none; 
+  position:fixed; 
+  top:0; left:0; 
+  width:100%; height:100%;
+  background:rgba(0,0,0,0.5); 
+  justify-content:center; 
+  align-items:center; 
+  z-index:200;
+}
+.modal-content {
+  background:#fff; 
+  padding:25px; 
+  border-radius:16px; 
+  width:90%; max-width:400px;
+  box-shadow:0 8px 25px var(--shadow);
+  animation:fadeIn 0.4s ease;
+}
+@keyframes fadeIn {
+  from{opacity:0; transform:translateY(-20px);}
+  to{opacity:1; transform:translateY(0);}
+}
+.close { float:right; font-size:1.3rem; cursor:pointer; transition:.3s; }
+.close:hover { color:var(--secondary); transform:rotate(90deg); }
+
+/* Message Alerts */
+.message {
+  margin-top:10px;
+  padding:10px;
+  border-radius:8px;
+  font-size:0.9rem;
+}
+.success{ background:#d1e7dd; color:#0f5132; }
+.error{ background:#f8d7da; color:#842029; }
+
+/* Footer */
+footer {
+  text-align:center; 
+  padding:20px; 
+  font-size:0.85rem; 
+  color:#777; 
+  border-top:1px solid #ddd;
+  margin-top:40px;
+}
+</style>
+
+</head>
+<body>
+
+<header class="header">
+  <h1><i class="fa-solid fa-crown"></i> Admin Dashboard</h1>
+  <button onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+</header>
+
+<div class="container">
+
+  <div class="carda">
+    <div>
+        <h2>⚙️ System Overview</h2>
+        <p><b>Total Users:</b> <span id="total-users">0</span></p>
+        <p><b>Total Supply:</b> <span id="total-supply">0</span> DVC</p>
+    </div>
+    <div class="card admin-wallet">
+        <h2>💼 Admin Wallet</h2>
+        <div class="wallet-amount" id="admin-wallet-amount">0 DVC</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>👥 User Accounts</h2>
+    <table id="user-table">
+      <thead>
+        <tr>
+          <th>ID</th><th>Name</th><th>Email</th><th>Password</th>
+          <th>Balance</th><th>Amount Request</th><th>Request Action</th>
+          <th>Amount Manage</th><th>Actions User</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>📜 Transaction History</h2>
+    <table id="tx-table">
+      <thead><tr><th>User</th><th>Type</th><th>Party</th><th>Amount</th><th>Date</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<footer>© 2025 D Virtual Systems | Admin Dashboard Demo</footer>
+
+<!-- Edit Modal -->
+<div id="editModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h3>Edit User</h3>
+    <div class="form-group"><label>Name</label><input id="edit-name"></div>
+    <div class="form-group"><label>Email</label><input id="edit-email"></div>
+    <div class="form-group"><label>Password</label><input id="edit-pass"></div>
+    <button class="action" onclick="saveEdit()">Save Changes</button>
+  </div>
+</div>
+
+<script type="module">
+  /* === FIREBASE IMPORTS === */
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { 
+    getFirestore, collection, getDoc, doc, updateDoc, deleteDoc, addDoc, onSnapshot
+  } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+  import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+  /* === FIREBASE CONFIG === */
+  const firebaseConfig = {
+    apiKey: "AIzaSyCATh_N8JV6kluHlH8edXcGgyda-Qec7NQ",
+    authDomain: "d-coin-4759b.firebaseapp.com",
+    projectId: "d-coin-4759b",
+    storageBucket: "d-coin-4759b.firebasestorage.app",
+    messagingSenderId: "640181564315",
+    appId: "1:640181564315:web:e82d7248506bab91b6a73e",
+    measurementId: "G-WYCCYF8J6G"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+
+  /* === AUTH CHECK === */
+  const loggedIn = JSON.parse(localStorage.getItem('loggedIn') || '{}');
+  if (!loggedIn || loggedIn.role !== 'admin') {
+    window.location.href = 'index.html';
+  }
+
+  /* === REAL-TIME DASHBOARD === */
+  let usersData = [];
+  let requestsData = [];
+
+  // Real-time listener for Users
+  onSnapshot(collection(db, "users"), (snapshot) => {
+    usersData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    renderDashboard();
+  });
+
+  // Real-time listener for Requests
+  onSnapshot(collection(db, "requests"), (snapshot) => {
+    requestsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    renderDashboard();
+  });
+
+  /* === RENDER DASHBOARD === */
+  function renderDashboard() {
+    document.getElementById('total-users').textContent = usersData.length;
+
+    const totalSupply = usersData.reduce((a, b) => a + (b.balance || 0), 0);
+    document.getElementById('total-supply').textContent = totalSupply.toFixed(2);
+    document.getElementById('admin-wallet-amount').textContent = totalSupply.toFixed(2) + " DVC";
+
+    const tbody = document.querySelector('#user-table tbody');
+    tbody.innerHTML = '';
+
+    usersData.forEach(u => {
+      const req = requestsData.find(r => r.userId === u.id && r.status === 'pending');
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${u.id}</td>
+        <td>${u.name}</td>
+        <td>${u.email}</td>
+        <td>${u.password || '(hidden)'}</td>
+        <td>${(u.balance || 0).toFixed(2)} DVC</td>
+        <td>${req ? req.amount + ' DVC' : ''}</td>
+        <td>${req ? `
+          <button class='small-btn green-btn' onclick='approveRequest("${req.id}", "${u.id}", ${req.amount})'>Accept</button>
+          <button class='small-btn orange-btn' onclick='cancelRequest("${req.id}")'>Cancel</button>
+        ` : ''}</td>
+        <td>
+          <button class='small-btn green-btn' onclick='manageBalance("${u.id}", "add")'>+Add</button>
+          <button class='small-btn orange-btn' onclick='manageBalance("${u.id}", "deduct")'>-Deduct</button>
+        </td>
+        <td>
+          <button class='small-btn edit-btn' onclick='openEditUser("${u.id}", "${u.name}", "${u.email}", "${u.password || ''}")'>✏️ Edit</button>
+          <button class='small-btn del-btn' onclick='deleteUser("${u.id}")'>🗑️ Delete</button>
+        </td>`;
+      tbody.appendChild(tr);
+    });
+
+    const txBody = document.querySelector('#tx-table tbody');
+    txBody.innerHTML = '';
+    usersData.forEach(u => {
+      (u.transactions || []).forEach(t => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${u.name}</td><td>${t.type}</td><td>${t.party}</td><td>${t.amount}</td><td>${t.date}</td>`;
+        txBody.appendChild(tr);
+      });
+    });
+  }
+
+  /* === APPROVE REQUEST === */
+  window.approveRequest = async function (reqId, userId, amount) {
+    try {
+      const userRef = doc(db, "users", userId);
+      const userSnap = await getDoc(userRef);
+      if (!userSnap.exists()) return alert("User not found.");
+
+      const user = userSnap.data();
+      const newBal = (user.balance || 0) + Number(amount);
+      const transactions = user.transactions || [];
+      transactions.push({
+        type: "Request Approved",
+        party: "Admin",
+        amount: "+" + amount,
+        date: new Date().toISOString().split("T")[0]
+      });
+
+      await updateDoc(userRef, { balance: newBal, transactions });
+      await updateDoc(doc(db, "requests", reqId), { status: "approved" });
+    } catch (err) {
+      alert("Error approving: " + err.message);
+    }
+  }
+
+  /* === CANCEL REQUEST === */
+  window.cancelRequest = async function (reqId) {
+    try {
+      await updateDoc(doc(db, "requests", reqId), { status: "cancelled" });
+    } catch (err) {
+      alert("Error: " + err.message);
+    }
+  }
+
+  /* === MANAGE BALANCE === */
+  window.manageBalance = async function (userId, action) {
+    const amount = parseFloat(prompt(`Enter amount to ${action}:`));
+    if (isNaN(amount) || amount <= 0) return;
+    const sign = action === "add" ? 1 : -1;
+    const today = new Date().toISOString().split("T")[0];
+
+    try {
+      const userRef = doc(db, "users", userId);
+      const userSnap = await getDoc(userRef);
+      if (!userSnap.exists()) return alert("User not found.");
+      const user = userSnap.data();
+
+      const newBal = (user.balance || 0) + sign * amount;
+      const transactions = user.transactions || [];
+      transactions.push({
+        type: action === "add" ? "Admin Add" : "Admin Deduct",
+        party: "Admin",
+        amount: (sign > 0 ? "+" : "-") + amount,
+        date: today
+      });
+
+      await updateDoc(userRef, { balance: newBal, transactions });
+    } catch (err) {
+      alert("Error updating: " + err.message);
+    }
+  }
+
+  /* === EDIT USER === */
+  let editUserId = null;
+  window.openEditUser = function (id, name, email, pass) {
+    editUserId = id;
+    document.getElementById('edit-name').value = name;
+    document.getElementById('edit-email').value = email;
+    document.getElementById('edit-pass').value = pass;
+    document.getElementById('editModal').style.display = 'flex';
+  }
+
+  window.saveEdit = async function () {
+    try {
+      const name = document.getElementById('edit-name').value.trim();
+      const email = document.getElementById('edit-email').value.trim();
+      const pass = document.getElementById('edit-pass').value.trim();
+
+      await updateDoc(doc(db, "users", editUserId), { name, email, password: pass });
+      closeModal();
+    } catch (err) {
+      alert("Error editing: " + err.message);
+    }
+  }
+
+  /* === DELETE USER === */
+  window.deleteUser = async function (id) {
+    if (!confirm('Delete this user?')) return;
+    try {
+      await deleteDoc(doc(db, "users", id));
+    } catch (err) {
+      alert("Error deleting: " + err.message);
+    }
+  }
+
+  /* === CLOSE MODAL & LOGOUT === */
+  window.closeModal = function () {
+    document.getElementById('editModal').style.display = 'none';
+  }
+
+  window.logout = async function () {
+    try { await signOut(auth); } catch {}
+    localStorage.removeItem('loggedIn');
+    window.location.href = 'index.html';
+  }
+</script>
+</body>
+</html>
